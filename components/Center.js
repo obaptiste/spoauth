@@ -26,6 +26,8 @@ function Center() {
     console.log("CENTER useEffect", playlistId);
   }, [playlistId]); // shuffle colors for background
 
+  useEffecrt
+
   return (
     <div className="flex-grow text-white">
       <header className="absolute top-5 right-8">
