@@ -9,7 +9,7 @@ function MyApp({
   pageProps: { session, ...pageProps },
 }: AppProps<Session>) {
   return (
-    <SessionProvider session={pageProps.session as typeof pageProps}>
+    <SessionProvider session={pageProps.session as typeof pageProps & Session}>
       <RecoilRoot>
         <Component {...pageProps} />
       </RecoilRoot>

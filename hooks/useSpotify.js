@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
 import spotifyApi from '../lib/spotify';
-import 
+
 
 function useSpotify() {
   const { data: session, status } = useSession();
@@ -12,8 +12,16 @@ function useSpotify() {
         signIn();
       }
       spotifyApi.setAccessToken(session.user.accessToken);
+    };
+    if(status === "loading") {
+      return;
     }
-  }, [session]);
+    if(status === "unauthenticated") {
+      signIn();
+    }
+    
+
+  }, [session, status]);
 
   return spotifyApi;
 }

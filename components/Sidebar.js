@@ -1,32 +1,49 @@
-import React from 'react'
-import {useState, useEffect} from 'react';
-import { useRecoilState } from 'recoil';
-import {signOut, useSession} from "next-auth/react";
-import { playlistIdState } from "../atoms/playlistAtom";
+import React from "react";
+import { useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { signOut, useSession } from "next-auth/react";
+import { playlistIdState, selectedPlaylistState } from "../atoms/playlistAtom";
+
 import useSpotify from "../hooks/useSpotify";
-import {HomeIcon, LibraryIcon, SearchIcon, PlusCircleIcon, HeartIcon, RssIcon} from "@heroicons/react/outline";
+import {
+  HomeIcon,
+  LibraryIcon,
+  SearchIcon,
+  PlusCircleIcon,
+  HeartIcon,
+  RssIcon,
+} from "@heroicons/react/outline";
 
 function Sidebar() {
   const spotifyApi = useSpotify();
-   const {data: session} = useSession();
-   const [playlists, setPlaylists] = useState([]);
-   
+  const { data: session } = useSession();
+  const [playlists, setPlaylists] = useState([]);
+  const [playlistId, setPlaylistId] = useRecoilState(playlistIdState);
+  const [selectedPlaylist, setSelectedPlaylist] = useRecoilState(selectedPlaylistState);
 
-   useEffect(() => {
-    if(spotifyApi.getAccessToken()){
+
+
+  useEffect(() => {
+    if (spotifyApi.getAccessToken()) {
       spotifyApi.getUserPlaylists().then((data) => {
         setPlaylists(data.body.items);
-    });
-  }
-},[session, spotifyApi]);
+      });
+    }
+  }, [session, spotifyApi]);
 
-console.log(playlists);
+  const handlePlaylist = (playlist) => {
+    const { id } = playlist;
+    playlist && setPlaylistId(id);
+    setSelectedPlaylist(playlist);
+  
 
-   
-   return (
+    console.table("id", playlistId, "selected playlist", selectedPlaylist);
+  };
+
+  return (
     <div className="text-gray-500 p-5 text-sm border-r border-gray-900 overflow-y-scroll scrollbar-hide h-screen">
       <div className="space-y-4">
-        <p onClick={()=> signOut()}>LOGOUT</p>
+        <p onClick={() => signOut()}>LOGOUT</p>
         <button className="flex items-center space-x-2 hover:text-white">
           <HomeIcon className="h-5 w-5" />
           <p>Home</p>
@@ -55,12 +72,16 @@ console.log(playlists);
         </button>
         <hr className="border-t-[0.1px] border-gray-900" />
         <div>
-        {playlists.map((playlist) => {
-          <p key={playlist.id} onClick={() => setPlaylistId(play)} className="cursor-pointer hover:text-white">
-            {playlist.name}k
-          </p>
-        })}
-        </div>  
+          {playlists.map((playlist) => (
+            <p
+              key={playlist.id}
+              onClick={() => handlePlaylist(playlist)}
+              className="cursor-pointer hover:text-white"
+            >
+              {playlist.name}
+            </p>
+          ))}
+        </div>
         <p className="cursor-pointer hover:text-white">your playlist</p>
         <p className="cursor-pointer hover:text-white">your playlist</p>
         <p className="cursor-pointer hover:text-white">your playlist</p>
@@ -79,4 +100,4 @@ console.log(playlists);
   );
 }
 
-export default Sidebar
+export default Sidebar;

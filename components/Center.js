@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/outline";
 import { useSession } from "next-auth/react";
 import { shuffle } from "lodash";
+import { useRecoilValue } from "recoil";
+import { playlistIdState, selectedPlaylistState } from "../atoms/playlistAtom";
 
 
 function Center() {
   const { data: session } = useSession();
   const [color, setColor] = useState();
+  const {playlistId} = useRecoilValue(playlistIdState);
   
   const colors = [
     "from-indigo-500",
@@ -20,7 +23,8 @@ function Center() {
 
   useEffect(() => {
     setColor(shuffle(colors).pop());
-  }, []); // shuffle colors for background
+    console.log("CENTER useEffect", playlistId);
+  }, [playlistId]); // shuffle colors for background
 
   return (
     <div className="flex-grow text-white">
