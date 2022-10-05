@@ -7,11 +7,11 @@ import {
   playlistIdState,
   playlistState,
 } from "../atoms/playlistAtom";
-import useSpotify from "../lib/spotify";
+import useSpotify from "../hooks/useSpotify";
 
 function Center() {
-  const spotifyApi = useSpotify();
   const { data: session, status } = useSession();
+  const spotifyApi = useSpotify();
   const [color, setColor] = useState();
   const playlistId  = useRecoilValue(playlistIdState);
   const [playlist, setPlaylist] = useRecoilState(playlistState);
@@ -39,14 +39,16 @@ function Center() {
   }, [playlistId, status]); // shuffle colors for background
 
   useEffect(() => {
-    spotifyApi.get(playlistId)
+    spotifyApi
+    .getPlaylist(playlistId)
          .then((data) => {
-          setPlaylist(data.body)
+          setPlaylist(data.body);
+         })
           .catch((error) => {
             console.error('something went wrong in center.js', error);
           });
   }, [spotifyApi, playlistId, status]); // shuffle])
-  });
+  
   
   return (
     <div className="flex-grow text-white">
