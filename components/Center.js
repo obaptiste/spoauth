@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/outline";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { shuffle } from "lodash";
-import { useRecoilValue } from "recoil";
-import { playlistIdState, selectedPlaylistState } from "../atoms/playlistAtom";
-
+import { useRecoilValue, useRecoilState } from "recoil";
+import {
+  playlistIdState,
+  playlistState,
+} from "../atoms/playlistAtom";
+import useSpotify from "../lib/spotify";
 
 function Center() {
-  const { data: session } = useSession();
+  const spotifyApi = useSpotify();
+  const { data: session, status } = useSession();
   const [color, setColor] = useState();
-  const {playlistId} = useRecoilValue(playlistIdState);
-  
+  const playlistId  = useRecoilValue(playlistIdState);
+  const [playlist, setPlaylist] = useRecoilState(playlistState);
+
   const colors = [
     "from-indigo-500",
     "from-blue-500",
@@ -23,11 +28,26 @@ function Center() {
 
   useEffect(() => {
     setColor(shuffle(colors).pop());
-    console.log("CENTER useEffect", playlistId);
-  }, [playlistId]); // shuffle colors for background
+    try {
+      if (!{authenticated: true}) {
+        /// do nothing
+        signIn();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [playlistId, status]); // shuffle colors for background
 
-  useEffecrt
-
+  useEffect(() => {
+    spotifyApi.get(playlistId)
+         .then((data) => {
+          setPlaylist(data.body)
+          .catch((error) => {
+            console.error('something went wrong in center.js', error);
+          });
+  }, [spotifyApi, playlistId, status]); // shuffle])
+  });
+  
   return (
     <div className="flex-grow text-white">
       <header className="absolute top-5 right-8">
@@ -38,13 +58,14 @@ function Center() {
             alt=""
           />
           <h2>{session?.user.name}</h2>
-        <ChevronDownIcon className="h-5 w-5" />
+          <ChevronDownIcon className="h-5 w-5" />
         </div>
       </header>
       <section
         className={`"flex items-end space-x-7 bg-gradient-to-b to-black ${color} h-80 text-white padding-8"`}
       >
-        <h1>hey</h1>
+        <h1>{playlist && playlist.name}</h1>
+        <h3>{playlist && playlist?.description}</h3>
       </section>
     </div>
   );

@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { signOut, useSession } from "next-auth/react";
-import { playlistIdState, selectedPlaylistState } from "../atoms/playlistAtom";
+import { playlistIdState, selectedPlaylistState, playlistState } from "../atoms/playlistAtom";
 
 import useSpotify from "../hooks/useSpotify";
 import {

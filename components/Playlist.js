@@ -12,7 +12,7 @@ function PlaylistComponent() {
   const { data: session } = useSession();
   const [playlists, setPlaylists] = useState([]);
   const [playlistId, setPlaylistId] = useRecoilState(playlistIdState);
-  const [selectedPlaylist, setPlaylistState] = useRecoilState(
+  const [selectedPlaylist, setSelectedPlaylistState] = useRecoilState(
     selectedPlaylistState
   );
 
