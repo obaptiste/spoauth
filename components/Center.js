@@ -3,17 +3,14 @@ import { ChevronDownIcon } from "@heroicons/react/outline";
 import { signIn, useSession } from "next-auth/react";
 import { shuffle } from "lodash";
 import { useRecoilValue, useRecoilState } from "recoil";
-import {
-  playlistIdState,
-  playlistState,
-} from "../atoms/playlistAtom";
+import { playlistIdState, playlistState } from "../atoms/playlistAtom";
 import useSpotify from "../hooks/useSpotify";
 
 function Center() {
   const { data: session, status } = useSession();
   const spotifyApi = useSpotify();
   const [color, setColor] = useState();
-  const playlistId  = useRecoilValue(playlistIdState);
+  const playlistId = useRecoilValue(playlistIdState);
   const [playlist, setPlaylist] = useRecoilState(playlistState);
 
   const colors = [
@@ -29,7 +26,7 @@ function Center() {
   useEffect(() => {
     setColor(shuffle(colors).pop());
     try {
-      if (!{authenticated: true}) {
+      if (!{ authenticated: true }) {
         /// do nothing
         signIn();
       }
@@ -40,18 +37,17 @@ function Center() {
 
   useEffect(() => {
     spotifyApi
-    .getPlaylist(playlistId)
-         .then((data) => {
-          setPlaylist(data.body);
-         })
-          .catch((error) => {
-            console.error('something went wrong in center.js', error);
-          });
+      .getPlaylist(playlistId)
+      .then((data) => {
+        setPlaylist(data.body);
+      })
+      .catch((error) => {
+        console.error("something went wrong in center.js", error);
+      });
   }, [spotifyApi, playlistId, status]); // shuffle])
-  
-  
+
   return (
-    <div className="flex-grow text-white">
+    <div className="flex-grow h-screen overflow-y-scroll text-white">
       <header className="absolute top-5 right-8">
         <div className="flex items-center bg-black space-x-3 opacity-90 hover:opacity-80 cursor-pointer rounded-full p-1 pr-2">
           <img
@@ -66,8 +62,25 @@ function Center() {
       <section
         className={`"flex items-end space-x-7 bg-gradient-to-b to-black ${color} h-80 text-white padding-8"`}
       >
-        <h1>{playlist && playlist.name}</h1>
-        <h3>{playlist && playlist?.description}</h3>
+        <img
+          className="h-44 w-44 shadow-2xl"
+          src={playlist && playlist?.images?.[0]?.url}
+          alt=""
+        />
+
+        <div>
+          <p>PLAYLIST</p>
+          <h1 className="text-2xl md:text-3xl xl:text-5xl font-bold">
+            {playlist && playlist?.name}
+          </h1>
+        </div>
+      </section>
+      <section>
+      <div className="px-8 flex flex-col space-y-1 pb-28 text-white">
+        {playlist?.tracks?.items?.map((track, i) => (
+            <div key={track.track.id}>{track.track.name}</div>   
+        ))}
+      </div>
       </section>
     </div>
   );

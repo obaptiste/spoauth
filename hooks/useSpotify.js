@@ -17,7 +17,7 @@ function useSpotify() {
       return;
     }
     if(status === "unauthenticated") {
-      signIn();
+      signOut();
     }
     
 
