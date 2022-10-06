@@ -5,6 +5,7 @@ import { shuffle } from "lodash";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { playlistIdState, playlistState } from "../atoms/playlistAtom";
 import useSpotify from "../hooks/useSpotify";
+import Songs from "./Songs";
 
 function Center() {
   const { data: session, status } = useSession();
@@ -47,7 +48,7 @@ function Center() {
   }, [spotifyApi, playlistId, status]); // shuffle])
 
   return (
-    <div className="flex-grow h-screen overflow-y-scroll text-white">
+    <div className="flex-grow h-screen overflow-y-scroll text-white scrollbar-hide">
       <header className="absolute top-5 right-8">
         <div className="flex items-center bg-black space-x-3 opacity-90 hover:opacity-80 cursor-pointer rounded-full p-1 pr-2">
           <img
@@ -77,9 +78,11 @@ function Center() {
       </section>
       <section>
       <div className="px-8 flex flex-col space-y-1 pb-28 text-white">
+        <Songs />
         {playlist?.tracks?.items?.map((track, i) => (
             <div key={track.track.id}>{track.track.name}</div>   
         ))}
+
       </div>
       </section>
     </div>
