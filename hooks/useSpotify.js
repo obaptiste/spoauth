@@ -4,7 +4,11 @@ import spotifyApi from '../lib/spotify';
 
 
 function useSpotify() {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession({
+    onUnauthenticated(){
+      signIn();
+    }
+  });
 
   useEffect(() => {
     if (session) {
